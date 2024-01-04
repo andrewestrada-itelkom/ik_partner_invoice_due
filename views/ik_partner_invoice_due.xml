@@ -1,0 +1,50 @@
+<odoo>
+  <data>
+
+    <record id="customer_invoice_due_tree" model="ir.ui.view">
+      <field name="name">res.partner.invoice.due.inherit.tree</field>
+      <field name="model">res.partner</field>
+      <field name="priority" eval="20" />
+      <field name="arch" type="xml">
+        <tree string="Customer Invoice due" create="false" delete="false">
+          <field name="display_name" />
+          <field name="user_id" invisible="1" />
+          <field name="country_id" invisible="1" />
+          <field name="parent_id" invisible="1" />
+          <field name="invoice_amount_due" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_partner_inherit_invoice_due" model="ir.ui.view">
+      <field name="name">res.partner.invoice.due.form.inherit</field>
+      <field name="inherit_id" ref="base.view_partner_form" />
+      <field name="model">res.partner</field>
+      <field name="arch" type="xml">
+        <xpath expr="//page[@name='sales_purchases']" position="after">
+          <page string="Invoice Due" name="invoice_due_tab">
+            <div class="oe_right" name="invoice_due_button">
+              <button name="do_invoice_due_partner_mail" type="object" string="Send Email" groups="account.group_account_user" />
+            </div>
+            <label for="message_template" class="oe_edit_only" />
+            <field name="message_template" widget="html" class="oe-bordered-editor" options="{'style-inline': true, 'codeview': true, 'dynamic_placeholder': true}" />
+            <field name="invoice_due_ids">
+              <tree string="Facturas Pendientes" editable="bottom" create="false" delete="false" colors="red:(not date_maturity or date_maturity&lt;=current_date) and result&gt;0">
+                <field name="invoice_date" readonly="True" />
+                <field name="invoice_date_due" readonly="True" />
+                <field name="name" readonly="True" />
+                <field name="excluded_to_send" />
+                <field name="payment_state"  widget="badge" decoration-danger="payment_state == 'not_paid'" decoration-warning="payment_state in ('partial', 'in_payment')" />
+                <field name="amount_residual_signed" />
+              </tree>
+            </field>
+            <group class="oe_subtotal_footer oe_right">
+              <field name="invoice_amount_due" />
+            </group>
+            <div class="oe_clear" />
+          </page>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- Default Template Mail -->
+    <record id="email_template_partner_invoice_due_default" model="mail.template">
+        <field name="name">Default partner invoice due e-mail</field>
+        <field name="email_from">{{(user.email or '')}}</field>
+        <field name="subject">INFORMACION ITELKOM: Recordatorio de cartera</field>
+        <field name="email_to">{{object.email}}</field>
+        <field name="lang">{{object.lang}}</field>
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="auto_delete" eval="True" />
+        <field name="body_html">
+            <![CDATA[<div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 12px; color: #222222; background-color: #ffffff; ">
+    <t t-raw="object.get_formatted_message() or ''"></t>
+    <br>
+    <br>
+   <table style="border-spacing: 0; border-collapse: collapse; width: 100%; text-align: center;">
+        <thead>
+            <tr>
+                <th style="padding: 5px; border: 1px solid black;">Factura</th>
+                <th style="padding: 5px; border: 1px solid black;">Fecha Factura</th>
+                <th style="padding: 5px; border: 1px solid black;">Fecha de vencimiento</th>
+                <th style="padding: 5px; border: 1px solid black;">Referencia</th>
+                <th style="padding: 5px; border: 1px solid black;">Total sin impuestos</th>
+                <th style="padding: 5px; border: 1px solid black;">Total</th>
+                <th style="padding: 5px; border: 1px solid black;">Total Adeudado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <t t-foreach="object.invoice_due_ids" t-as="inv">
+                <tr style="background-color:
+                        % if inv.move_id.move_type == 'out_refund':
+                            LightGray
+                        % endif
+                    " t-if="not inv.excluded_to_send">
+                    <td style="padding: 5px; border: 1px solid black;"><span t-out="inv.name or ''">IT12345</span></td>
+                    <td style="padding: 5px; border: 1px solid black;"> <span t-out="format_date(inv.invoice_date) or''">05/05/2021</span></td>
+                    <td style="padding: 5px; border: 1px solid black;"> <span t-out="format_date(inv.invoice_date_due) or ''">05/05/2021</span></td>
+                    <td style="padding: 5px; border: 1px solid black;"> <span t-out="inv.ref or ''">XXXXX</span></td>
+                    <td style="padding: 5px; border: 1px solid black; text-align: right;"> <span t-out="format_amount(inv.amount_untaxed, inv.currency_id) or ''">$ 10.00</span> </td>
+                    <td style="padding: 5px; border: 1px solid black; text-align: right;"> <span t-out="format_amount(inv.amount_total, inv.currency_id) or ''">$ 10.00</span> </td>
+                    <td style="padding: 5px; border: 1px solid black; text-align: right;"> <span t-out="format_amount(inv.amount_residual, inv.currency_id) or ''">$ 10.00</span> </td>
+                </tr>
+            </t>
+        </tbody>
+    </table>
+</div>]]>
+        </field>
+    </record>
+</odoo>
+
